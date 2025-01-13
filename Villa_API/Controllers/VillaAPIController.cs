@@ -15,7 +15,7 @@ namespace Villa_API.Controllers
             return Ok(VillaStorage.villaList);
         }
 
-        [HttpGet("{id:int}",Name = "GetVilla")]
+        [HttpGet("{id:int}", Name = "GetVilla")]
         public ActionResult<VillaDTO> GetVilla(int id)
         {
             if (id == 0)
@@ -35,9 +35,9 @@ namespace Villa_API.Controllers
         [HttpPost]
         public ActionResult<VillaDTO> AddVilla([FromBody] VillaDTO addVilla)
         {
-            if (VillaStorage.villaList.FirstOrDefault(u=>u.Name.ToLower() == addVilla.Name.ToLower()) != null) 
+            if (VillaStorage.villaList.FirstOrDefault(u => u.Name.ToLower() == addVilla.Name.ToLower()) != null)
             {
-                ModelState.AddModelError("","Villa Already Exists");
+                ModelState.AddModelError("", "Villa Already Exists");
                 return BadRequest(ModelState);
             }
 
@@ -56,6 +56,40 @@ namespace Villa_API.Controllers
 
             //return Ok(addVilla);
             return CreatedAtRoute("GetVilla", new { id = addVilla.Id }, addVilla);
+
+        }
+
+        [HttpDelete]
+        public IActionResult DeleteVilla(int id)
+        {
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+            var deleteId = VillaStorage.villaList.FirstOrDefault(u => u.Id == id);
+
+            if (deleteId == null)
+            {
+                return NotFound();
+            }
+            VillaStorage.villaList.Remove(deleteId);
+            return NoContent();
+        }
+
+        [HttpPut("{id:int}",Name = "UpdateVilla")]
+        public IActionResult UpdateVilla(int id , [FromBody]VillaDTO updateVilla)
+        {
+            if (updateVilla == null || id != updateVilla.Id)
+            {
+                return BadRequest();
+            }
+            var updateId = VillaStorage.villaList.FirstOrDefault(u=>u.Id == id);
+
+            updateId.Name = updateVilla.Name;
+            updateId.Sqft = updateVilla.Sqft;
+            updateId.Occupancy  = updateVilla.Occupancy;
+
+            return NoContent();
 
         }
     }
