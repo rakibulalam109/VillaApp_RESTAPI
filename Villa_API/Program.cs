@@ -1,6 +1,13 @@
+using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Villa_API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 
 // Add services to the container.
 Log.Logger = new LoggerConfiguration().MinimumLevel.Information()
