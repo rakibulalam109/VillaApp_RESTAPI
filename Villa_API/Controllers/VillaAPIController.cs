@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using Villa_API.Data;
 using Villa_API.Models;
 using Villa_API.Models.DTOs;
@@ -92,5 +93,31 @@ namespace Villa_API.Controllers
             return NoContent();
 
         }
+
+        [HttpPatch("{id:int}",Name = "updateParticularVilla")]
+        public IActionResult updateParticularVilla(int id, JsonPatchDocument<VillaDTO> patchDto)
+        {
+            if (patchDto == null || id == 0)
+            {
+                return BadRequest();
+            }
+            var updateId = VillaStorage.villaList.FirstOrDefault(u=>u.Id==id);
+
+            if (updateId == null)
+            {
+                return BadRequest();
+            }
+
+            patchDto.ApplyTo(updateId,ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            return NoContent();
+        }
     }
+
+    
 }
