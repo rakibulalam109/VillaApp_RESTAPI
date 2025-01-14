@@ -10,9 +10,15 @@ namespace Villa_API.Controllers
     [ApiController]
     public class VillaAPIController : ControllerBase
     {
+        private readonly ILogger<VillaAPIController> _logger;
+        public VillaAPIController(ILogger<VillaAPIController> logger)
+        {
+            _logger = logger;   
+        }
         [HttpGet]
         public ActionResult<IEnumerable<VillaDTO>> GetVillas()
         {
+            _logger.LogInformation("Getting All Villas");
             return Ok(VillaStorage.villaList);
         }
 
@@ -21,6 +27,7 @@ namespace Villa_API.Controllers
         {
             if (id == 0)
             {
+                _logger.LogError("Get Villa Error With Id: " + id);
                 return BadRequest();
             }
             var villa = Ok(VillaStorage.villaList.FirstOrDefault(u => u.Id == id));
@@ -60,7 +67,7 @@ namespace Villa_API.Controllers
 
         }
 
-        [HttpDelete]
+        [HttpDelete("{id:int}", Name = "DeleteVilla")]
         public IActionResult DeleteVilla(int id)
         {
             if (id == 0)
